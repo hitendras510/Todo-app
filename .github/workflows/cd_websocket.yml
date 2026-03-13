@@ -21,6 +21,4 @@ jobs:
           context: .
           file: ./docker/Dockerfile.websocket
           push: true
-          tags: | 
-            hitendras510/todo-app-websocket:latest
-            hitendras510/todo-app-websocket:${{ github.sha }}
+          tags:  hitendras510/todo-app-websocket:${{ github.sha }
