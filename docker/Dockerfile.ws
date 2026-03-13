@@ -1,4 +1,4 @@
-FROM oven/bun:1
+FROM oven/bun:1.3.10
 
 WORKDIR /usr/src/app
 
@@ -10,9 +10,10 @@ COPY ./turbo.json ./turbo.json
 
 COPY ./apps/websocket ./apps/websocket
 
-RUN bun install
-RUN bun run db:generate
 
-EXPOSE 8081
+RUN bun install
+RUN bun run db:migrate
+
+EXPOSE 8080
 
 CMD ["bun", "run", "start:websocket"]
