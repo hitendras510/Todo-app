@@ -4,11 +4,11 @@ export default async function Home() {
   const users = await prismaClient.user.findMany();
   return (
     <div>
-      {JSON.stringify(users)}
+      <pre>{JSON.stringify(users, null, 2)}</pre>
     </div>
   );
 }
 
 // export const revalidate = 60 // revalidate every 60 seconds
 // or
-// export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'

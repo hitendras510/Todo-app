@@ -1,4 +1,4 @@
-name: Deploy the backend
+name: Deploy the websocket server
 on: 
   push: 
     branches: [main]
@@ -22,3 +22,4 @@ jobs:
           file: ./docker/Dockerfile.websocket
           push: true
           tags:  hitendras510/todo-app-websocket:${{ github.sha }}
+      
