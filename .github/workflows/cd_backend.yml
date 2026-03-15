@@ -1,24 +1,48 @@
-name: Deploy the backend
-on: 
-  push: 
+name: Deploy the backend server
+
+on:
+  push:
     branches: [main]
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout the code 
+
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Docker login
-        uses: docker/login-action@v2 
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} 
-          password: ${{ secrets.DOCKERHUB_TOKEN }} 
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push backend image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./docker/Dockerfile.backend
           push: true
           tags: hitendras510/todo-app-backend:${{ github.sha }}
+
+      - name: Deploy to EC2
+        run: |
+          mkdir -p ~/.ssh
+          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 18.234.61.207 >> ~/.ssh/known_hosts
+
+          IMAGE_TAG=${{ github.sha }}
+
+          ssh ec2-user@18.234.61.207 << EOF
+            docker stop backend || true
+            docker rm backend || true
+            docker pull hitendras510/todo-app-backend:$IMAGE_TAG
+            docker run -d \
+              -p 8080:8080 \
+              --name backend \
+              --restart always \
+              hitendras510/todo-app-backend:$IMAGE_TAG
+          EOF
