@@ -2,15 +2,16 @@
   "name": "week-27-todo-app",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
+    "build": "npx turbo run build || npm run build:fallback",
+    "build:fallback": "cd apps/web && npx next build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "db:migrate": "cd packages/db && npx prisma generate && cd ../..",
-    "start:web": "cd apps/web && bun run start",
-    "start:backend": "cd apps/backend && bun run index.ts",
-    "start:websocket": "cd apps/websocket && bun run index.ts"
+    "start:web": "cd apps/web && npm run start",
+    "start:backend": "cd apps/backend && node index.ts",
+    "start:websocket": "cd apps/websocket && node index.ts"
   },
   "devDependencies": {
     "prettier": "^3.5.0",
